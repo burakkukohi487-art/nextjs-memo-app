@@ -1,27 +1,41 @@
-import { collection, doc, addDoc, getDocs, deleteDoc, serverTimestamp, orderBy, query } from "firebase/firestore"
+import { ref, push, get, remove, serverTimestamp, query, orderByChild } from "firebase/database";
 import { db } from "./firebase"
 import { Memo } from "../types/memo"
 
 // メモ追加
-export async function addMemo(text: string) {
-    await addDoc(collection(db, "memos"), {
+export async function addMemo(text: string): Promise<Memo> {
+    const memosRef = ref(db, "memos");
+    const newRef = await push(memosRef, {
         text,
         createdAt: serverTimestamp(),
     });
+
+    return {
+        id: newRef.key!,
+        text,
+        createdAt: new Date(),
+    };
 }
 
 // メモ全件取得
 export async function getMemos(): Promise<Memo[]> {
-    const q = query(collection(db, "memos"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
-        id: doc.id,
-        text: doc.data().text,
-        createdAt: doc.data().createdAt?.toDate(),
-    }));
+    const q = query(ref(db, "memos"), orderByChild("createdAt"));
+    const snapshot = await get(q);
+    if (!snapshot.exists()) return [];
+
+    const memos: Memo[] = [];
+    snapshot.forEach((child) => {
+        memos.push({
+            id: child.key!,
+            text: child.val().text,
+            createdAt: new Date(child.val().createdAt),
+        });
+    });
+
+    return memos.reverse()
 }
 
 // メモ削除
 export async function deleteMemo(id: string) {
-    await deleteDoc(doc(db, "memos", id));
+    await remove(ref(db, `memos/${id}`));
 }

@@ -5,14 +5,24 @@ import { Memo } from "./types/memo"
 import { addMemo, getMemos, deleteMemo } from "./lib/memoService";
 import MemoForm from "./components/MemoForm";
 import MemoList from "./components/MemoList";
+import Errormessage from "./components/ErrorMessage";
+import LoadingSpinner from "./components/loadingSpinner";
 
 
 export default function Home() {
   const [memos, setMemos] = useState<Memo[]>([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const load = async () => {
-    const data = await getMemos();
-    setMemos(data);
+    setLoading(true)
+    try {
+      const data = await getMemos();
+      setMemos(data);
+    } catch(e) {
+      setError(`データ取得に失敗しました。\n${e}`);
+    }
+    setLoading(false)
   };
 
   useEffect(() => {
@@ -31,9 +41,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100 flex items-center justify-center text-gray-800">
-      <div>
+      <div className="mb-auto mt-20">
         <h1 className="text-2xl font-bold mb-6 text-center">メモ</h1>
+        {error && <Errormessage message={error} />}
         <MemoForm onAdd={handleAdd} />
+        {loading && <LoadingSpinner />}
         <MemoList memos={memos} onDelete={handleDelete} />
       </div>
     </main>

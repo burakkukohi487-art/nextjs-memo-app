@@ -2,6 +2,10 @@
 
 Next.jsを使ったDB接続(firebase)の練習
 
+## 目的
+
+DBとの連携を学ぶ
+
 ## デモ
 
 https://nextjs-memo-app.vercel.app/
