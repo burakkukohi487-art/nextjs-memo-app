@@ -3,30 +3,46 @@ import { db } from "./firebase"
 import { Memo } from "../types/memo"
 
 // メモ追加
-export async function addMemo(text: string): Promise<Memo> {
+export async function addMemo(title: string, text: string): Promise<Memo> {
     const memosRef = ref(db, "memos");
+    const trimedText = text.trim()
+    const trimedTitle = title.trim()
     const newRef = await push(memosRef, {
-        text,
+        title: trimedTitle,
+        text: trimedText,
         createdAt: serverTimestamp(),
     });
 
     return {
         id: newRef.key!,
-        text,
+        title: trimedTitle,
+        text: trimedText,
         createdAt: new Date(),
     };
 }
 
-// メモ全件取得
-export async function getMemos(): Promise<Memo[]> {
+// メモ取得
+export async function getMemos(id?: string): Promise<Memo[]> {
     const q = query(ref(db, "memos"), orderByChild("createdAt"));
+
+    if (id) {
+        const snapshot = await get(ref(db, `memos/${id}`))
+        if (!snapshot.exists()) return [];
+        return [{
+            id: snapshot.key!,
+            title: snapshot.val().title,
+            text: snapshot.val().text,
+            createdAt: snapshot.val().createdAt,
+        }]
+    }
+
     const snapshot = await get(q);
     if (!snapshot.exists()) return [];
-
     const memos: Memo[] = [];
     snapshot.forEach((child) => {
         memos.push({
             id: child.key!,
+            title: child.val().title,
             text: child.val().text,
             createdAt: new Date(child.val().createdAt),
         });

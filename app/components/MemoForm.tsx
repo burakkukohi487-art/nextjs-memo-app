@@ -1,29 +1,47 @@
 import { useState } from "react";
 
 type Props = {
-    onAdd: (text: string) => void;
+    onAdd: (title: string, text: string) => void;
 }
 
 export default function AddMemo({ onAdd }: Props) {
+    const [title, setTitle] = useState("");
     const [text, setText] = useState("");
 
     const handleAdd = () => {
-        if (!text) return;
-        onAdd(text);
+        if (!title) return;
+        onAdd(title, text);
+        setTitle("");
         setText("");
     };
 
     return (
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-col items-center mb-6 space-y-2">
             <input
                 type="text"
-                value={text}
+                value={title}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="タイトルを入力"
+                className="px-4 py-2 border border-gray-400 rounded-lg w-sm"
+                required
+            />
+            <textarea
+                value={text}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleAdd();
+                    }
+                }}
+
                 onChange={(e) => setText(e.target.value)}
                 placeholder="メモを入力"
+                className="px-4 py-2 border border-gray-400 rounded-lg w-sm h-40"
             />
             <button
                 onClick={handleAdd}
+                className="bg-blue-500 max-w-16 items-center text-white px-4 py-2 rounded-lg cursor-pointer"
             >
                 追加
             </button>
