@@ -23,8 +23,7 @@ export default function AddMemo({ onAdd }: Props) {
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="タイトルを入力"
-                className="px-4 py-2 border border-gray-400 rounded-lg w-sm"
-                required
+                className="px-4 py-2 border border-gray-300 rounded-xl outline-none w-sm focus:ring-1 focus:ring-blue-400 transition-shadow"
             />
             <textarea
                 value={text}
@@ -34,14 +33,13 @@ export default function AddMemo({ onAdd }: Props) {
                         handleAdd();
                     }
                 }}
-
                 onChange={(e) => setText(e.target.value)}
                 placeholder="メモを入力"
-                className="px-4 py-2 border border-gray-400 rounded-lg w-sm h-40"
+                className="px-4 py-2 border border-gray-400 rounded-xl outline-none w-sm focus:ring-1 focus:ring-blue-400 transition-shadow h-40"
             />
             <button
                 onClick={handleAdd}
-                className="bg-blue-500 max-w-16 items-center text-white px-4 py-2 rounded-lg cursor-pointer"
+                className="bg-blue-400 max-w-16 items-center text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-blue-500 transition-colors"
             >
                 追加
             </button>

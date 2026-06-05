@@ -41,8 +41,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white flex items-center justify-center text-gray-800">
-      <div className="mb-auto mt-20 shadow-md rounded-2xl max-w-md p-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">メモ</h1>
+      <div className="mb-auto mt-20 shadow-md rounded-xl w-md p-8">
+        <h1 className="text-3xl font-bold mb-6 text-center">メモ</h1>
         {error && <Errormessage message={error} />}
         <MemoForm onAdd={handleAdd} />
         <hr /><br />
